@@ -115,3 +115,53 @@
 
 (define (prime? x)
   (= (prime2 x) 1))
+
+(require rackunit rackunit/text-ui)
+
+(run-tests (test-suite "prime? tests"
+             (check-false (prime? 0))
+             (check-false (prime? 1))
+             (check-false (prime? -120))
+             (check-false (prime? 120))
+             (check-true (prime? 2))
+             (check-true (prime? 3))
+             (check-true (prime? 7))
+             (check-true (prime? 101))
+             (check-true (prime? 2411)))
+           'verbose)
+
+(define (exists? pred? a b)
+  (accumulate (lambda (x y) (or x y))
+                (or) a b pred? 1+)
+  )
+
+(define ((forall? pred? a b))
+  (not (exists? (lambda (k) (not (pred? k))) a b))
+  )
+
+(define (count-pred pred? a b next)
+  (accumulate + 0 a b (lambda (x)
+                (if (pred? x) 1 0)) next)
+  )
+(define (odd? num) (= (modulo num 2) 1))
+
+(define (n-choose-k n k)
+  (/ (fact n) (* (fact k) (fact (- n k))))
+  )
+
+(define (variations k n)
+  (/ (fact n) (fact (- n k)))
+  )
+
+(define (flip f)
+  (λ (x y) (f y x))
+  )
+
+(define (twice f x) (f (f x)))
+(define (compose f g) (lambda (x) (f (g x))))
+
+(define (repeated f n)
+        (if (= n 1)
+            (λ (x) (f x))
+            (compose f (repeated f (- n 1))))
+  )
